@@ -1,6 +1,6 @@
 CREATE TABLE ingredients
 (
-    id          INT           NOT NULL,
+    id          INT           NOT NULL AUTO_INCREMENT,
     name        VARCHAR(255)  NOT NULL,
     price       DECIMAL(5, 2) NOT NULL DEFAULT 0.00,
     category_id INT           NOT NULL,
