@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 public class Ingredient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private long id;
 
     @Column(name = "name", nullable = false)
     private String name;

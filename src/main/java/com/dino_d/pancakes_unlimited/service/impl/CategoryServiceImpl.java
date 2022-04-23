@@ -2,9 +2,13 @@ package com.dino_d.pancakes_unlimited.service.impl;
 
 import com.dino_d.pancakes_unlimited.dto.CategoryDto;
 import com.dino_d.pancakes_unlimited.entity.Category;
+import com.dino_d.pancakes_unlimited.exception.ResourceNotFoundException;
 import com.dino_d.pancakes_unlimited.repository.CategoryRepository;
 import com.dino_d.pancakes_unlimited.service.CategoryService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -17,18 +21,63 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto createCategory(CategoryDto categoryDto) {
+        Category category = mapToEntity(categoryDto);
+        Category savedCategory = categoryRepository.save(category);
 
-        // convert DTO to entity
+        return mapToDto(savedCategory);
+    }
+    @Override
+    public CategoryDto getCategoryById(long id) {
+        Category category = categoryRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Category", "id", id));
+        return mapToDto(category);
+    }
+
+    @Override
+    public CategoryDto getCategoryByName(String name) {
+        Category category = categoryRepository.findByName(name).orElseThrow(
+                () -> new ResourceNotFoundException("Category", "name", name));
+        return mapToDto(category);
+    }
+
+    @Override
+    public CategoryDto updateCategoryById(CategoryDto categoryDto, long id) {
+        Category category = categoryRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Category", "id", id));
+
+        category.setName(categoryDto.getName());
+        Category updatedCategory = categoryRepository.save(category);
+
+        return mapToDto(updatedCategory);
+    }
+
+    @Override
+    public void deleteCategoryById(long id) {
+        Category category = categoryRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Category", "id", id));
+        categoryRepository.delete(category);
+    }
+
+    @Override
+    public List<CategoryDto> getAllCategories() {
+        List<Category> categories = categoryRepository.findAll();
+        return categories.stream().map(category -> mapToDto(category)).collect(Collectors.toList());
+    }
+
+    // convert entity to DTO
+    private CategoryDto mapToDto(Category category) {
+        CategoryDto categoryDto = new CategoryDto();
+        categoryDto.setId(category.getId());
+        categoryDto.setName(category.getName());
+
+        return categoryDto;
+    }
+
+    // convert DTO to entity
+    private Category mapToEntity(CategoryDto categoryDto) {
         Category category = new Category();
         category.setName(categoryDto.getName());
 
-        Category savedCategory = categoryRepository.save(category);
-
-        // convert saved entity to DTO
-        CategoryDto categoryDtoResponse = new CategoryDto();
-        categoryDtoResponse.setId(savedCategory.getId());
-        categoryDtoResponse.setName(savedCategory.getName());
-
-        return categoryDtoResponse;
+        return category;
     }
 }
