@@ -11,15 +11,12 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "categories", uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})})
-public class Category {
+@Table(name = "pancakes")
+public class Pancake {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
-
-    @OneToMany(mappedBy = "category")
-    private Set<Ingredient> ingredients = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "pancake")
+    private Set<PancakeIngredients> pancakeIngredients = new LinkedHashSet<>();
 }

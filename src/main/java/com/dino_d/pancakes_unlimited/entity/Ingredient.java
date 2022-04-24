@@ -1,13 +1,14 @@
 package com.dino_d.pancakes_unlimited.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -27,4 +28,6 @@ public class Ingredient {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @OneToMany(mappedBy = "ingredient")
+    private Set<PancakeIngredients> pancakeIngredients = new LinkedHashSet<>();
 }

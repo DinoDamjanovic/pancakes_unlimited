@@ -12,7 +12,7 @@ import java.util.List;
 @RequestMapping("/api/ingredients")
 public class IngredientController {
 
-    IngredientService ingredientService;
+    private IngredientService ingredientService;
 
     public IngredientController(IngredientService ingredientService) {
         this.ingredientService = ingredientService;

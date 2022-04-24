@@ -31,9 +31,9 @@ public class IngredientServiceImpl implements IngredientService {
         Category category = categoryRepository.findById(categoryId).orElseThrow(
                 () -> new ResourceNotFoundException("Category", "id", categoryId));
         ingredient.setCategory(category);
-        ingredientRepository.save(ingredient);
+        Ingredient savedIngredient = ingredientRepository.save(ingredient);
 
-        return mapToDto(ingredient);
+        return mapToDto(savedIngredient);
     }
 
     @Override
@@ -60,9 +60,9 @@ public class IngredientServiceImpl implements IngredientService {
         Category category = categoryRepository.findById(categoryId).orElseThrow(
                 () -> new ResourceNotFoundException("Category", "id", categoryId));
         ingredient.setCategory(category);
-        ingredientRepository.save(ingredient);
+        Ingredient updatedIngredient = ingredientRepository.save(ingredient);
 
-        return mapToDto(ingredient);
+        return mapToDto(updatedIngredient);
     }
 
     @Override
