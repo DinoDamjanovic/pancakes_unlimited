@@ -9,6 +9,9 @@ import com.dino_d.pancakes_unlimited.repository.IngredientRepository;
 import com.dino_d.pancakes_unlimited.service.IngredientService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class IngredientServiceImpl implements IngredientService {
 
@@ -21,11 +24,12 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    public IngredientDto createIngredient(long id, IngredientDto ingredientDto) {
+    public IngredientDto createIngredient(IngredientDto ingredientDto) {
         Ingredient ingredient = mapToEntity(ingredientDto);
 
-        Category category = categoryRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Category", "id", id));
+        long categoryId = ingredientDto.getCategoryId();
+        Category category = categoryRepository.findById(categoryId).orElseThrow(
+                () -> new ResourceNotFoundException("Category", "id", categoryId));
         ingredient.setCategory(category);
         ingredientRepository.save(ingredient);
 
@@ -34,9 +38,44 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     public IngredientDto getIngredientById(long id) {
-        Ingredient category = ingredientRepository.findById(id).orElseThrow(
+        Ingredient ingredient = ingredientRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Category", "id", id));
-        return mapToDto(category);
+        return mapToDto(ingredient);
+    }
+
+    @Override
+    public List<IngredientDto> getIngredientsByCategoryId(long categoryId) {
+        List<Ingredient> ingredients = ingredientRepository.findByCategoryId(categoryId);
+        return ingredients.stream().map(ingredient -> mapToDto(ingredient)).collect(Collectors.toList());
+    }
+
+    @Override
+    public IngredientDto updateIngredientById(long id, IngredientDto ingredientDto) {
+        Ingredient ingredient = ingredientRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Ingredient", "id", id));
+        ingredient.setName(ingredientDto.getName());
+        ingredient.setPrice(ingredientDto.getPrice());
+
+        long categoryId = ingredientDto.getCategoryId();
+        Category category = categoryRepository.findById(categoryId).orElseThrow(
+                () -> new ResourceNotFoundException("Category", "id", categoryId));
+        ingredient.setCategory(category);
+        ingredientRepository.save(ingredient);
+
+        return mapToDto(ingredient);
+    }
+
+    @Override
+    public void deleteIngredientById(long id) {
+        Ingredient ingredient = ingredientRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Ingredient", "id", id));
+        ingredientRepository.delete(ingredient);
+    }
+
+    @Override
+    public List<IngredientDto> getAllIngredients() {
+        List<Ingredient> ingredients = ingredientRepository.findAll();
+        return ingredients.stream().map(ingredient -> mapToDto(ingredient)).collect(Collectors.toList());
     }
 
     // convert entity to DTO
