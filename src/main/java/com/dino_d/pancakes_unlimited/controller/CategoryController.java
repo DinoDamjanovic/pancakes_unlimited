@@ -48,7 +48,7 @@ public class CategoryController {
     }
 
     @GetMapping
-    public List<CategoryDto> getAllCategories() {
-        return categoryService.getAllCategories();
+    public ResponseEntity<List<CategoryDto>> getAllCategories() {
+        return new ResponseEntity<>(categoryService.getAllCategories(), HttpStatus.OK);
     }
 }

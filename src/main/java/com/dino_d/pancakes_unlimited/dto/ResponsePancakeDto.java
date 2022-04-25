@@ -7,5 +7,5 @@ import java.util.List;
 @Data
 public class ResponsePancakeDto {
     private long id;
-    private List<String> ingredientsNames;
+    private List<String> ingredients;
 }

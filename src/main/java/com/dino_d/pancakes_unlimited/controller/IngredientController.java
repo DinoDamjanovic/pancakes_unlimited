@@ -24,13 +24,13 @@ public class IngredientController {
     }
 
     @GetMapping("/{id}")
-    public IngredientDto getIngredientById(@PathVariable long id) {
-        return ingredientService.getIngredientById(id);
+    public ResponseEntity<IngredientDto> getIngredientById(@PathVariable(name = "id") long id) {
+        return new ResponseEntity<>(ingredientService.getIngredientById(id), HttpStatus.OK);
     }
 
     @GetMapping("/category/{categoryId}")
-    public List<IngredientDto> getIngredientsByCategoryId(@PathVariable long categoryId) {
-        return ingredientService.getIngredientsByCategoryId(categoryId);
+    public ResponseEntity<List<IngredientDto>> getIngredientsByCategoryId(@PathVariable(name = "categoryId") long categoryId) {
+        return new ResponseEntity<>(ingredientService.getIngredientsByCategoryId(categoryId), HttpStatus.OK);
     }
 
     //TODO Maybe this is a better solution than getIngredientsByCategoryId() method above?
@@ -52,7 +52,7 @@ public class IngredientController {
     }
 
     @GetMapping
-    public List<IngredientDto> getAllIngredients() {
-        return ingredientService.getAllIngredients();
+    public ResponseEntity<List<IngredientDto>> getAllIngredients() {
+        return new ResponseEntity<>(ingredientService.getAllIngredients(), HttpStatus.OK);
     }
 }
