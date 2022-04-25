@@ -1,6 +1,7 @@
 package com.dino_d.pancakes_unlimited.controller;
 
-import com.dino_d.pancakes_unlimited.dto.IngredientDto;
+import com.dino_d.pancakes_unlimited.dto.RequestIngredientDto;
+import com.dino_d.pancakes_unlimited.dto.ResponseIngredientDto;
 import com.dino_d.pancakes_unlimited.service.IngredientService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +20,17 @@ public class IngredientController {
     }
 
     @PostMapping
-    public ResponseEntity<IngredientDto> createIngredient(@RequestBody IngredientDto ingredientDto) {
-        return new ResponseEntity<>(ingredientService.createIngredient(ingredientDto), HttpStatus.CREATED);
+    public ResponseEntity<ResponseIngredientDto> createIngredient(@RequestBody RequestIngredientDto requestIngredientDto) {
+        return new ResponseEntity<>(ingredientService.createIngredient(requestIngredientDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<IngredientDto> getIngredientById(@PathVariable(name = "id") long id) {
+    public ResponseEntity<ResponseIngredientDto> getIngredientById(@PathVariable(name = "id") long id) {
         return new ResponseEntity<>(ingredientService.getIngredientById(id), HttpStatus.OK);
     }
 
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<List<IngredientDto>> getIngredientsByCategoryId(@PathVariable(name = "categoryId") long categoryId) {
+    public ResponseEntity<List<ResponseIngredientDto>> getIngredientsByCategoryId(@PathVariable(name = "categoryId") long categoryId) {
         return new ResponseEntity<>(ingredientService.getIngredientsByCategoryId(categoryId), HttpStatus.OK);
     }
 
@@ -40,9 +41,9 @@ public class IngredientController {
 //    }
 
     @PutMapping("/{id}")
-    public ResponseEntity<IngredientDto> updateIngredientById(@RequestBody IngredientDto ingredientDto,
-                                                              @PathVariable(name = "id") long id) {
-        return new ResponseEntity<>(ingredientService.updateIngredientById(id, ingredientDto), HttpStatus.OK);
+    public ResponseEntity<ResponseIngredientDto> updateIngredientById(@RequestBody RequestIngredientDto requestIngredientDto,
+                                                                      @PathVariable(name = "id") long id) {
+        return new ResponseEntity<>(ingredientService.updateIngredientById(id, requestIngredientDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -52,7 +53,7 @@ public class IngredientController {
     }
 
     @GetMapping
-    public ResponseEntity<List<IngredientDto>> getAllIngredients() {
+    public ResponseEntity<List<ResponseIngredientDto>> getAllIngredients() {
         return new ResponseEntity<>(ingredientService.getAllIngredients(), HttpStatus.OK);
     }
 }

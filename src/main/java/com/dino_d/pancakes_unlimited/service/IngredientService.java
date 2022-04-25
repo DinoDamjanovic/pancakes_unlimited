@@ -1,19 +1,20 @@
 package com.dino_d.pancakes_unlimited.service;
 
-import com.dino_d.pancakes_unlimited.dto.IngredientDto;
+import com.dino_d.pancakes_unlimited.dto.RequestIngredientDto;
+import com.dino_d.pancakes_unlimited.dto.ResponseIngredientDto;
 
 import java.util.List;
 
 public interface IngredientService {
-    IngredientDto createIngredient(IngredientDto ingredientDto);
+    ResponseIngredientDto createIngredient(RequestIngredientDto requestIngredientDto);
 
-    IngredientDto getIngredientById(long id);
+    ResponseIngredientDto getIngredientById(long id);
 
-    List<IngredientDto> getIngredientsByCategoryId(long categoryId);
+    List<ResponseIngredientDto> getIngredientsByCategoryId(long categoryId);
 
-    List<IngredientDto> getAllIngredients();
+    List<ResponseIngredientDto> getAllIngredients();
 
-    IngredientDto updateIngredientById(long id, IngredientDto ingredientDto);
+    ResponseIngredientDto updateIngredientById(long id, RequestIngredientDto requestIngredientDto);
 
     void deleteIngredientById(long id);
 }
