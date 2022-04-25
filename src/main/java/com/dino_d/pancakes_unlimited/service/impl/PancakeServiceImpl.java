@@ -8,7 +8,6 @@ import com.dino_d.pancakes_unlimited.entity.PancakeIngredients;
 import com.dino_d.pancakes_unlimited.exception.ResourceNotFoundException;
 import com.dino_d.pancakes_unlimited.repository.IngredientRepository;
 import com.dino_d.pancakes_unlimited.repository.PancakeRepository;
-import com.dino_d.pancakes_unlimited.repository.PancakeIngredientsRepository;
 import com.dino_d.pancakes_unlimited.service.PancakeService;
 import org.springframework.stereotype.Service;
 
@@ -21,14 +20,11 @@ import java.util.stream.Collectors;
 public class PancakeServiceImpl implements PancakeService {
 
     private PancakeRepository pancakeRepository;
-    private PancakeIngredientsRepository pancakeIngredientsRepository;
     private IngredientRepository ingredientRepository;
 
     public PancakeServiceImpl(PancakeRepository pancakeRepository,
-                              PancakeIngredientsRepository pancakeIngredientsRepository,
                               IngredientRepository ingredientRepository) {
         this.pancakeRepository = pancakeRepository;
-        this.pancakeIngredientsRepository = pancakeIngredientsRepository;
         this.ingredientRepository = ingredientRepository;
     }
 
@@ -36,9 +32,6 @@ public class PancakeServiceImpl implements PancakeService {
     public ResponsePancakeDto createPancake(RequestPancakeDto requestPancakeDto) {
         Pancake pancake = mapToEntity(requestPancakeDto);
         Pancake savedPancake = pancakeRepository.save(pancake);
-
-        Set<PancakeIngredients> pancakeIngredients = savedPancake.getPancakeIngredients();
-        pancakeIngredientsRepository.saveAll(pancakeIngredients);
 
         return mapToDto(savedPancake);
     }
@@ -52,23 +45,11 @@ public class PancakeServiceImpl implements PancakeService {
 
     @Override
     public ResponsePancakeDto updatePancakeById(long id, RequestPancakeDto requestPancakeDto) {
-        // check if pancake with provided id exists
         Pancake pancake = pancakeRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Pancake", "id", id));
 
         mapToEntity(requestPancakeDto, pancake);
-
-        // delete old pancake ingredients entries
-        pancakeIngredientsRepository.deleteByPancakeId(id);
-
         Pancake savedPancake = pancakeRepository.save(pancake);
-
-        // TODO savedPancake has all Set entries == null for some reason. This is a workaround to fix the problem.
-        mapToEntity(requestPancakeDto, savedPancake);
-
-        // save new pancake ingredients entries
-        Set<PancakeIngredients> pancakeIngredients = savedPancake.getPancakeIngredients();
-        pancakeIngredientsRepository.saveAll(pancakeIngredients);
 
         return mapToDto(savedPancake);
     }
@@ -78,9 +59,6 @@ public class PancakeServiceImpl implements PancakeService {
         Pancake pancake = pancakeRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Pancake", "id", id));
         pancakeRepository.delete(pancake);
-
-        // delete all entries in pancakes_with_ingredients table for this pancake
-        pancakeIngredientsRepository.deleteByPancakeId(id);
     }
 
     @Override
@@ -106,7 +84,7 @@ public class PancakeServiceImpl implements PancakeService {
         Pancake pancake = new Pancake();
 
         List<Ingredient> ingredients = getIngredients(requestPancakeDto);
-        pancake.setPancakeIngredients(getPancakeIngredientsSet(pancake, ingredients));
+        pancake.getPancakeIngredients().addAll(getPancakeIngredientsSet(pancake, ingredients));
 
         return pancake;
     }
@@ -114,7 +92,8 @@ public class PancakeServiceImpl implements PancakeService {
     // update existing entity with DTO data
     private void mapToEntity(RequestPancakeDto requestPancakeDto, Pancake pancake) {
         List<Ingredient> ingredients = getIngredients(requestPancakeDto);
-        pancake.setPancakeIngredients(getPancakeIngredientsSet(pancake, ingredients));
+        pancake.getPancakeIngredients().clear();
+        pancake.getPancakeIngredients().addAll(getPancakeIngredientsSet(pancake, ingredients));
     }
 
     private List<Ingredient> getIngredients(RequestPancakeDto requestPancakeDto) {

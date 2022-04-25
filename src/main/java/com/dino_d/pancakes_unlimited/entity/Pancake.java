@@ -17,6 +17,6 @@ public class Pancake {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToMany(mappedBy = "pancake")
+    @OneToMany(mappedBy = "pancake", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PancakeIngredients> pancakeIngredients = new LinkedHashSet<>();
 }
