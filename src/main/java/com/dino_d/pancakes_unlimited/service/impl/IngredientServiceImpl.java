@@ -40,7 +40,7 @@ public class IngredientServiceImpl implements IngredientService {
     @Override
     public ResponseIngredientDto getIngredientById(long id) {
         Ingredient ingredient = ingredientRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Category", "id", id));
+                () -> new ResourceNotFoundException("Ingredient", "id", id));
         return mapToDto(ingredient);
     }
 

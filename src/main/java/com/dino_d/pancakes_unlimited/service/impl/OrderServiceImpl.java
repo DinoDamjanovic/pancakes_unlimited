@@ -37,14 +37,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ResponseOrderDto createOrder(RequestOrderDto requestOrderDto) {
 
-        List<Long> pancakeIds = requestOrderDto.getPancakeIds();
-        if (pancakeIds.size() < MINIMUM_PANCAKES_PER_ORDER) {
-            throw new PancakesUnlimitedAPIException(HttpStatus.BAD_REQUEST,
-                    "Minimum pancakes per order is " + MINIMUM_PANCAKES_PER_ORDER + ".");
-        }
+        validateOrder(requestOrderDto);
 
-        List<Pancake> pancakes = getPancakes(pancakeIds);
-
+        List<Pancake> pancakes = getPancakes(requestOrderDto.getPancakeIds());
         validatePancakes(pancakes);
 
         Order order = mapToEntity(requestOrderDto, new LinkedHashSet<>(pancakes));
@@ -59,10 +54,20 @@ public class OrderServiceImpl implements OrderService {
         pancakeRepository.saveAll(pancakes);
         // ---------------------------------
 
-        List<ResponsePancakeDto> pancakeDtos = pancakes.stream().map(
-                p -> mapPancakeToDto(p)).collect(Collectors.toList());
+        return mapToDto(savedOrder);
+    }
 
-        return mapToDto(savedOrder, pancakeDtos);
+    @Override
+    public ResponseOrderDto getOrderById(long id) {
+        Order order = orderRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Order", "id", id));
+        return mapToDto(order);
+    }
+
+    @Override
+    public List<ResponseOrderDto> getAllOrders() {
+        List<Order> orders = orderRepository.findAll();
+        return orders.stream().map(o -> mapToDto(o)).collect(Collectors.toList());
     }
 
     private List<Pancake> getPancakes(List<Long> pancakeIds) {
@@ -80,6 +85,13 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return pancakes;
+    }
+
+    private void validateOrder(RequestOrderDto requestOrderDto) {
+        if (requestOrderDto.getPancakeIds().size() < MINIMUM_PANCAKES_PER_ORDER) {
+            throw new PancakesUnlimitedAPIException(HttpStatus.BAD_REQUEST,
+                    "Minimum pancakes per order is " + MINIMUM_PANCAKES_PER_ORDER + ".");
+        }
     }
 
     private void validatePancakes(List<Pancake> pancakes) {
@@ -118,15 +130,18 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-    private ResponseOrderDto mapToDto(Order order, List<ResponsePancakeDto> pancakeDtos) {
+    private ResponseOrderDto mapToDto(Order order) {
         ResponseOrderDto responseOrderDto = new ResponseOrderDto();
         responseOrderDto.setId(order.getId());
         responseOrderDto.setCreationTime(String.valueOf(order.getCreationTime()));
         responseOrderDto.setDescription(order.getDescription());
+
+        List<ResponsePancakeDto> pancakeDtos = order.getPancakes().stream().map(
+                p -> mapPancakeToDto(p)).collect(Collectors.toList());
         responseOrderDto.setPancakeList(pancakeDtos);
+
         return responseOrderDto;
     }
-
     private ResponsePancakeDto mapPancakeToDto(Pancake pancake) {
         ResponsePancakeDto responsePancakeDto = new ResponsePancakeDto();
         responsePancakeDto.setId(pancake.getId());
