@@ -95,7 +95,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void validatePancakes(List<Pancake> pancakes) {
-        boolean hasBase = false;
+        int baseIngredientCount = 0;
         boolean hasStuffing = false;
         Set<PancakeIngredients> pancakeIngredients;
 
@@ -104,20 +104,23 @@ public class OrderServiceImpl implements OrderService {
 
             for (PancakeIngredients ingredient : pancakeIngredients) {
                 if (ingredient.getIngredient().getCategory().getId() == CATEGORY_BASE_ID) {
-                    hasBase = true;
+                    baseIngredientCount++;
                 } else if (ingredient.getIngredient().getCategory().getId() == CATEGORY_STUFFING_ID) {
                     hasStuffing = true;
                 }
-
-                if (hasBase && hasStuffing) break;
             }
 
-            if (!hasBase || !hasStuffing) {
+            if ((baseIngredientCount != 1) || !hasStuffing) {
+                String stuffing = hasStuffing ? "has" : "doesn't have";
                 throw new PancakesUnlimitedAPIException(HttpStatus.BAD_REQUEST,
-                        "Pancake with id " + pancake.getId() + " is incomplete. " +
-                                "Pancake must have a base ingredient and at least one stuffing.");
+                        "Pancake with id " + pancake.getId() + " is invalid. " +
+                                "Pancake must have only one base ingredient and at least one stuffing. " +
+                                "This pancake " + stuffing + " a stuffing and " +
+                                "has " + baseIngredientCount + " base ingredient(s).");
             }
-            hasBase = hasStuffing = false;
+
+            baseIngredientCount = 0;
+            hasStuffing = false;
         }
     }
 
