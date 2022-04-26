@@ -1,0 +1,8 @@
+CREATE TABLE orders
+(
+    id            BIGINT       NOT NULL AUTO_INCREMENT,
+    description   VARCHAR(400) NULL,
+    creation_time DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE
+);

@@ -19,4 +19,8 @@ public class Pancake {
 
     @OneToMany(mappedBy = "pancake", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PancakeIngredients> pancakeIngredients = new LinkedHashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
 }
