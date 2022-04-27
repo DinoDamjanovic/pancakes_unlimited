@@ -1,0 +1,2 @@
+ALTER TABLE pancakes
+    ADD COLUMN price DECIMAL(5, 2) NOT NULL DEFAULT 0.00 AFTER order_id;

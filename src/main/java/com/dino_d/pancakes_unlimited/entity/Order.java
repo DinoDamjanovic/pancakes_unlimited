@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -29,4 +30,8 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private Set<Pancake> pancakes = new LinkedHashSet<>();
+
+    @Column(name = "total_price", nullable = false, precision = 7, scale = 2)
+    private BigDecimal totalPrice;
+
 }

@@ -44,8 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto updateCategoryById(long id, CategoryDto categoryDto) {
         Category category = categoryRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Category", "id", id));
-
-        category.setName(categoryDto.getName());
+        updateEntity(categoryDto, category);
         Category updatedCategory = categoryRepository.save(category);
 
         return mapToDto(updatedCategory);
@@ -79,5 +78,10 @@ public class CategoryServiceImpl implements CategoryService {
         category.setName(categoryDto.getName());
 
         return category;
+    }
+
+    // update existing entity with DTO data
+    private void updateEntity(CategoryDto categoryDto, Category category) {
+        category.setName(categoryDto.getName());
     }
 }

@@ -11,6 +11,7 @@ import com.dino_d.pancakes_unlimited.repository.PancakeRepository;
 import com.dino_d.pancakes_unlimited.service.PancakeService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,7 +49,7 @@ public class PancakeServiceImpl implements PancakeService {
         Pancake pancake = pancakeRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Pancake", "id", id));
 
-        mapToEntity(requestPancakeDto, pancake);
+        updateEntity(requestPancakeDto, pancake);
         Pancake savedPancake = pancakeRepository.save(pancake);
 
         return mapToDto(savedPancake);
@@ -86,14 +87,22 @@ public class PancakeServiceImpl implements PancakeService {
         List<Ingredient> ingredients = getIngredients(requestPancakeDto);
         pancake.getPancakeIngredients().addAll(getPancakeIngredientsSet(pancake, ingredients));
 
+        pancake.setPrice(calculatePrice(pancake));
+
         return pancake;
     }
 
     // update existing entity with DTO data
-    private void mapToEntity(RequestPancakeDto requestPancakeDto, Pancake pancake) {
+    private void updateEntity(RequestPancakeDto requestPancakeDto, Pancake pancake) {
         List<Ingredient> ingredients = getIngredients(requestPancakeDto);
         pancake.getPancakeIngredients().clear();
         pancake.getPancakeIngredients().addAll(getPancakeIngredientsSet(pancake, ingredients));
+        pancake.setPrice(calculatePrice(pancake));
+    }
+
+    private BigDecimal calculatePrice(Pancake pancake) {
+        return pancake.getPancakeIngredients().stream().map(
+                p -> p.getIngredient().getPrice()).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private List<Ingredient> getIngredients(RequestPancakeDto requestPancakeDto) {

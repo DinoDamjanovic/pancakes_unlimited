@@ -1,6 +1,7 @@
 package com.dino_d.pancakes_unlimited.entity;
 
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -27,6 +28,9 @@ public class Ingredient {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    @Column(name = "is_healthy", nullable = false)
+    private boolean isHealthy;
 
     @OneToMany(mappedBy = "ingredient")
     private Set<PancakeIngredients> pancakeIngredients = new LinkedHashSet<>();

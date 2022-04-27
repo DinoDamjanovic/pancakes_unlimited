@@ -3,12 +3,11 @@ package com.dino_d.pancakes_unlimited.dto;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
-public class ResponseIngredientDto {
+public class ResponsePancakeOrderDto {
     private long id;
-    private String name;
     private BigDecimal price;
-    private String category;
-    private String healthy;
+    private List<String> ingredients;
 }

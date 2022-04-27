@@ -27,11 +27,6 @@ public class IngredientServiceImpl implements IngredientService {
     @Override
     public ResponseIngredientDto createIngredient(RequestIngredientDto requestIngredientDto) {
         Ingredient ingredient = mapToEntity(requestIngredientDto);
-
-        long categoryId = requestIngredientDto.getCategoryId();
-        Category category = categoryRepository.findById(categoryId).orElseThrow(
-                () -> new ResourceNotFoundException("Category", "id", categoryId));
-        ingredient.setCategory(category);
         Ingredient savedIngredient = ingredientRepository.save(ingredient);
 
         return mapToDto(savedIngredient);
@@ -54,13 +49,7 @@ public class IngredientServiceImpl implements IngredientService {
     public ResponseIngredientDto updateIngredientById(long id, RequestIngredientDto requestIngredientDto) {
         Ingredient ingredient = ingredientRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Ingredient", "id", id));
-        ingredient.setName(requestIngredientDto.getName());
-        ingredient.setPrice(requestIngredientDto.getPrice());
-
-        long categoryId = requestIngredientDto.getCategoryId();
-        Category category = categoryRepository.findById(categoryId).orElseThrow(
-                () -> new ResourceNotFoundException("Category", "id", categoryId));
-        ingredient.setCategory(category);
+        updateEntity(requestIngredientDto, ingredient);
         Ingredient updatedIngredient = ingredientRepository.save(ingredient);
 
         return mapToDto(updatedIngredient);
@@ -86,16 +75,36 @@ public class IngredientServiceImpl implements IngredientService {
         responseIngredientDto.setName(ingredient.getName());
         responseIngredientDto.setPrice(ingredient.getPrice());
         responseIngredientDto.setCategory(ingredient.getCategory().getName());
+        responseIngredientDto.setHealthy(ingredient.isHealthy() ? "yes" : "no");
 
         return responseIngredientDto;
     }
 
     // convert DTO to entity
     private Ingredient mapToEntity(RequestIngredientDto requestIngredientDto) {
+        long categoryId = requestIngredientDto.getCategoryId();
+        Category category = categoryRepository.findById(categoryId).orElseThrow(
+                () -> new ResourceNotFoundException("Category", "id", categoryId));
+
         Ingredient ingredient = new Ingredient();
         ingredient.setName(requestIngredientDto.getName());
         ingredient.setPrice(requestIngredientDto.getPrice());
+        ingredient.setCategory(category);
+        ingredient.setHealthy(requestIngredientDto.isHealthy());
 
         return ingredient;
+    }
+
+    // update existing entity with DTO data
+    private void updateEntity(RequestIngredientDto requestIngredientDto, Ingredient ingredient) {
+        long categoryId = requestIngredientDto.getCategoryId();
+        Category category = categoryRepository.findById(categoryId).orElseThrow(
+                () -> new ResourceNotFoundException("Category", "id", categoryId));
+
+        ingredient.setName(requestIngredientDto.getName());
+        ingredient.setPrice(requestIngredientDto.getPrice());
+        ingredient.setCategory(category);
+
+        ingredient.setHealthy(requestIngredientDto.isHealthy());
     }
 }
