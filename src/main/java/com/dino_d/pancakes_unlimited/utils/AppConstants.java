@@ -15,6 +15,7 @@ public class AppConstants {
     // new price = 100% - 5%
     // new price = 95%
     // HEALTHY_DISCOUNT_AMOUNT = 0.95
+    public static final BigDecimal DISCOUNT_0_PERCENT = BigDecimal.valueOf(1);
     public static final BigDecimal DISCOUNT_5_PERCENT = BigDecimal.valueOf(0.95);
     public static final BigDecimal DISCOUNT_10_PERCENT = BigDecimal.valueOf(0.9);
     public static final BigDecimal DISCOUNT_15_PERCENT = BigDecimal.valueOf(0.85);

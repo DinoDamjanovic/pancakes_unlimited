@@ -133,18 +133,17 @@ public class OrderServiceImpl implements OrderService {
                 p -> p.getPrice()).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // first calculate 5% and 10% discounts if applicable
+        BigDecimal discountModifier = DISCOUNT_0_PERCENT;
         if (totalPrice.compareTo(BigDecimal.valueOf(200)) > 0) {
-            totalPrice = totalPrice.multiply(DISCOUNT_10_PERCENT);
-
+            discountModifier = DISCOUNT_10_PERCENT;
         } else if (totalPrice.compareTo(BigDecimal.valueOf(100)) > 0) {
-            totalPrice = totalPrice.multiply(DISCOUNT_5_PERCENT);
+            discountModifier = DISCOUNT_5_PERCENT;
         }
+        totalPrice = totalPrice.multiply(discountModifier);
 
         // now calculate healthy pancakes discount if applicable
-
-        // we will store ids and new prices of healthy pancakes to update them if needed
-        // Long = pancake_id     BigDecimal = new price
-        Map<Long, BigDecimal> discountedPancakePrices = new HashMap<>();
+        // we will store ids of healthy pancakes into a List to apply discount to them if needed
+        List<Long> healthyPancakeIds = new ArrayList<>();
 
         BigDecimal healthyDiscountedPrice = BigDecimal.valueOf(0);
         BigDecimal newPrice;
@@ -163,7 +162,7 @@ public class OrderServiceImpl implements OrderService {
             // check if percentage of healthy ingredients is higher than HEALTHY_DISCOUNT_THRESHOLD
             if ((((float) healthyIngredients / totalIngredients) * 100) > HEALTHY_DISCOUNT_THRESHOLD) {
                 newPrice = pancake.getPrice().multiply(DISCOUNT_15_PERCENT);
-                discountedPancakePrices.put(pancake.getId(), newPrice);
+                healthyPancakeIds.add(pancake.getId());
             } else {
                 newPrice = pancake.getPrice();
             }
@@ -175,22 +174,35 @@ public class OrderServiceImpl implements OrderService {
         // also apply prices to healthy pancakes and save new pancake prices to db
         if (totalPrice.compareTo(healthyDiscountedPrice) > 0) {
             totalPrice = healthyDiscountedPrice;
-            savePancakePricesToDB(pancakes, discountedPancakePrices);
+            savePancakePricesToDB(pancakes, healthyPancakeIds);
+
+            // else apply 5% or 10% discount to all pancakes in the order and save them
+        } else {
+            savePancakePricesToDB(pancakes, discountModifier);
         }
 
         // round to 2 decimal places
         return totalPrice.setScale(2, RoundingMode.HALF_EVEN);
     }
 
-    private void savePancakePricesToDB(Set<Pancake> pancakes, Map<Long, BigDecimal> discountedPancakePrices) {
-        for (Map.Entry<Long, BigDecimal> entry : discountedPancakePrices.entrySet()) {
+    private void savePancakePricesToDB(Set<Pancake> pancakes, List<Long> healthyPancakeIds) {
+        for (Long id : healthyPancakeIds) {
             for (Pancake pancake : pancakes) {
-                if (entry.getKey() == pancake.getId()) {
-                    pancake.setPrice(entry.getValue().setScale(2, RoundingMode.HALF_EVEN));
+                if (id == pancake.getId()) {
+                    pancake.setPrice(pancake.getPrice().multiply(DISCOUNT_15_PERCENT)
+                            .setScale(2, RoundingMode.HALF_EVEN));
                     pancakeRepository.save(pancake);
                 }
             }
         }
+    }
+
+    private void savePancakePricesToDB(Set<Pancake> pancakes, BigDecimal discountModifier) {
+        for (Pancake pancake : pancakes) {
+            pancake.setPrice(pancake.getPrice().multiply(discountModifier)
+                    .setScale(2, RoundingMode.HALF_EVEN));
+        }
+        pancakeRepository.saveAll(pancakes);
     }
 
     private Order mapToEntity(RequestOrderDto requestOrderDto, Set<Pancake> pancakes) {
