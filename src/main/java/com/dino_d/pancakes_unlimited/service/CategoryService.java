@@ -9,8 +9,6 @@ public interface CategoryService {
 
     CategoryDto getCategoryById(long id);
 
-    CategoryDto getCategoryByName(String name);
-
     CategoryDto updateCategoryById(long id, CategoryDto categoryDto);
 
     void deleteCategoryById(long id);

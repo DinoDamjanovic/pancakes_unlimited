@@ -4,7 +4,6 @@ import com.dino_d.pancakes_unlimited.dto.RequestPancakeDto;
 import com.dino_d.pancakes_unlimited.dto.ResponsePancakeDto;
 import com.dino_d.pancakes_unlimited.entity.Ingredient;
 import com.dino_d.pancakes_unlimited.entity.Pancake;
-import com.dino_d.pancakes_unlimited.entity.PancakeIngredients;
 import com.dino_d.pancakes_unlimited.exception.ResourceNotFoundException;
 import com.dino_d.pancakes_unlimited.repository.IngredientRepository;
 import com.dino_d.pancakes_unlimited.repository.PancakeRepository;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,8 +71,8 @@ public class PancakeServiceImpl implements PancakeService {
         ResponsePancakeDto responsePancakeDto = new ResponsePancakeDto();
         responsePancakeDto.setId(pancake.getId());
 
-        List<String> ingredients = pancake.getPancakeIngredients().stream().map(
-                p -> p.getIngredient().getName()).collect(Collectors.toList());
+        List<String> ingredients = pancake.getIngredients().stream().map(
+                i -> i.getName()).collect(Collectors.toList());
         responsePancakeDto.setIngredients(ingredients);
 
         return responsePancakeDto;
@@ -85,8 +83,7 @@ public class PancakeServiceImpl implements PancakeService {
         Pancake pancake = new Pancake();
 
         List<Ingredient> ingredients = getIngredients(requestPancakeDto);
-        pancake.getPancakeIngredients().addAll(getPancakeIngredientsSet(pancake, ingredients));
-
+        pancake.getIngredients().addAll(new LinkedHashSet<>(ingredients));
         pancake.setPrice(calculatePrice(pancake));
 
         return pancake;
@@ -95,14 +92,14 @@ public class PancakeServiceImpl implements PancakeService {
     // update existing entity with DTO data
     private void updateEntity(RequestPancakeDto requestPancakeDto, Pancake pancake) {
         List<Ingredient> ingredients = getIngredients(requestPancakeDto);
-        pancake.getPancakeIngredients().clear();
-        pancake.getPancakeIngredients().addAll(getPancakeIngredientsSet(pancake, ingredients));
+        pancake.getIngredients().clear();
+        pancake.getIngredients().addAll(new LinkedHashSet<>(ingredients));
         pancake.setPrice(calculatePrice(pancake));
     }
 
     private BigDecimal calculatePrice(Pancake pancake) {
-        return pancake.getPancakeIngredients().stream().map(
-                p -> p.getIngredient().getPrice()).reduce(BigDecimal.ZERO, BigDecimal::add);
+        return pancake.getIngredients().stream().map(
+                i -> i.getPrice()).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private List<Ingredient> getIngredients(RequestPancakeDto requestPancakeDto) {
@@ -119,15 +116,6 @@ public class PancakeServiceImpl implements PancakeService {
                 }
             }
         }
-
         return ingredients;
-    }
-
-    private Set<PancakeIngredients> getPancakeIngredientsSet(Pancake pancake, List<Ingredient> ingredients) {
-        Set<PancakeIngredients> pancakeIngredients = new LinkedHashSet<>();
-        for (Ingredient ingredient : ingredients) {
-            pancakeIngredients.add(new PancakeIngredients(pancake, ingredient));
-        }
-        return pancakeIngredients;
     }
 }

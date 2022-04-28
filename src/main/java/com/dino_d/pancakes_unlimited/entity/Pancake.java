@@ -18,14 +18,21 @@ public class Pancake {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToMany(mappedBy = "pancake", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PancakeIngredients> pancakeIngredients = new LinkedHashSet<>();
+    @Column(name = "price", nullable = false, precision = 5, scale = 2)
+    private BigDecimal price;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH})
+    @JoinTable(name = "pancakes_with_ingredients",
+            joinColumns = @JoinColumn(name = "pancake_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "ingredient_id", referencedColumnName = "id"))
+    private Set<Ingredient> ingredients = new LinkedHashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
-
-    @Column(name = "price", nullable = false, precision = 5, scale = 2)
-    private BigDecimal price;
 
 }

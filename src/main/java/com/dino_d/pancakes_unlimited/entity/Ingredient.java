@@ -1,12 +1,10 @@
 package com.dino_d.pancakes_unlimited.entity;
 
 import lombok.*;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.LinkedHashSet;
-import java.util.Set;
+
 
 @Getter
 @Setter
@@ -32,6 +30,4 @@ public class Ingredient {
     @Column(name = "is_healthy", nullable = false)
     private Boolean isHealthy;
 
-    @OneToMany(mappedBy = "ingredient")
-    private Set<PancakeIngredients> pancakeIngredients = new LinkedHashSet<>();
 }

@@ -28,7 +28,7 @@ public class Order {
     @Column(name = "creation_time", nullable = false)
     private Timestamp creationTime;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.ALL)
     private Set<Pancake> pancakes = new LinkedHashSet<>();
 
     @Column(name = "total_price", nullable = false, precision = 7, scale = 2)

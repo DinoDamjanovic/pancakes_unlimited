@@ -3,9 +3,9 @@ package com.dino_d.pancakes_unlimited.service.impl;
 import com.dino_d.pancakes_unlimited.dto.RequestOrderDto;
 import com.dino_d.pancakes_unlimited.dto.ResponseOrderDto;
 import com.dino_d.pancakes_unlimited.dto.ResponsePancakeOrderDto;
+import com.dino_d.pancakes_unlimited.entity.Ingredient;
 import com.dino_d.pancakes_unlimited.entity.Order;
 import com.dino_d.pancakes_unlimited.entity.Pancake;
-import com.dino_d.pancakes_unlimited.entity.PancakeIngredients;
 import com.dino_d.pancakes_unlimited.exception.PancakesUnlimitedAPIException;
 import com.dino_d.pancakes_unlimited.exception.ResourceNotFoundException;
 import com.dino_d.pancakes_unlimited.repository.OrderRepository;
@@ -40,10 +40,6 @@ public class OrderServiceImpl implements OrderService {
         Order order = mapToEntity(requestOrderDto, new LinkedHashSet<>(pancakes));
         Order savedOrder = orderRepository.save(order);
 
-        /*
-        TODO cascade = CascadeType.ALL in Order class doesn't update order_id
-         in pancakes table when saving order in database. This is a workaround.
-        */
         for (Pancake pancake : pancakes) {
             pancake.setOrder(savedOrder);
         }
@@ -78,17 +74,14 @@ public class OrderServiceImpl implements OrderService {
         List<Pancake> pancakes = getPancakes(pancakeIds);
         int baseIngredientCount = 0;
         boolean hasStuffing = false;
-        Set<PancakeIngredients> pancakeIngredients;
+        Set<Ingredient> ingredients;
 
         for (Pancake pancake : pancakes) {
-            pancakeIngredients = pancake.getPancakeIngredients();
+            ingredients = pancake.getIngredients();
 
-            for (PancakeIngredients ingredient : pancakeIngredients) {
-                if (ingredient.getIngredient().getCategory().getId() == CATEGORY_BASE_ID) {
-                    baseIngredientCount++;
-                } else if (ingredient.getIngredient().getCategory().getId() == CATEGORY_STUFFING_ID) {
-                    hasStuffing = true;
-                }
+            for (Ingredient ingredient : ingredients) {
+                if (ingredient.getCategory().getId() == CATEGORY_BASE_ID) baseIngredientCount++;
+                if (ingredient.getCategory().getId() == CATEGORY_STUFFING_ID) hasStuffing = true;
             }
 
             if ((baseIngredientCount != 1) || !hasStuffing) {
@@ -103,7 +96,6 @@ public class OrderServiceImpl implements OrderService {
             baseIngredientCount = 0;
             hasStuffing = false;
         }
-
         // return list of pancakes for further processing
         return pancakes;
     }
@@ -121,7 +113,6 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
         }
-
         return pancakes;
     }
 
@@ -151,8 +142,8 @@ public class OrderServiceImpl implements OrderService {
 
         for (Pancake pancake : pancakes) {
 
-            for (PancakeIngredients pancakeIngredient : pancake.getPancakeIngredients()) {
-                if (pancakeIngredient.getIngredient().getIsHealthy()) {
+            for (Ingredient ingredient : pancake.getIngredients()) {
+                if (ingredient.getIsHealthy()) {
                     healthyIngredients++;
                 }
                 totalIngredients++;
@@ -232,8 +223,8 @@ public class OrderServiceImpl implements OrderService {
         ResponsePancakeOrderDto responsePancakeOrderDto = new ResponsePancakeOrderDto();
         responsePancakeOrderDto.setId(pancake.getId());
 
-        List<String> ingredients = pancake.getPancakeIngredients().stream().map(
-                p -> p.getIngredient().getName()).collect(Collectors.toList());
+        List<String> ingredients = pancake.getIngredients().stream().map(
+                i -> i.getName()).collect(Collectors.toList());
         responsePancakeOrderDto.setIngredients(ingredients);
 
         responsePancakeOrderDto.setPrice(pancake.getPrice());
