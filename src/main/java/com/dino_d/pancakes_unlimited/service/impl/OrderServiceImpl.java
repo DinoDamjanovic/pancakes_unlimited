@@ -38,7 +38,6 @@ public class OrderServiceImpl implements OrderService {
         List<Pancake> pancakes = validateOrder(requestOrderDto);
 
         Order order = mapToEntity(requestOrderDto, new LinkedHashSet<>(pancakes));
-
         Order savedOrder = orderRepository.save(order);
 
         /*
