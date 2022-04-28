@@ -5,11 +5,14 @@ import com.dino_d.pancakes_unlimited.dto.ResponseOrderDto;
 import com.dino_d.pancakes_unlimited.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("/api/orders")
 public class OrderController {
 
@@ -25,7 +28,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseOrderDto> getOrderById(@PathVariable(name = "id") long id) {
+    public ResponseEntity<ResponseOrderDto> getOrderById(@PathVariable(name = "id") @Min(1) long id) {
         return new ResponseEntity<>(orderService.getOrderById(id), HttpStatus.OK);
     }
 

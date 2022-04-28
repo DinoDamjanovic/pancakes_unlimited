@@ -152,7 +152,7 @@ public class OrderServiceImpl implements OrderService {
         for (Pancake pancake : pancakes) {
 
             for (PancakeIngredients pancakeIngredient : pancake.getPancakeIngredients()) {
-                if (pancakeIngredient.getIngredient().isHealthy()) {
+                if (pancakeIngredient.getIngredient().getIsHealthy()) {
                     healthyIngredients++;
                 }
                 totalIngredients++;

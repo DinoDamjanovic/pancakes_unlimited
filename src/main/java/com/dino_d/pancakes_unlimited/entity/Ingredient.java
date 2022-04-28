@@ -30,7 +30,7 @@ public class Ingredient {
     private Category category;
 
     @Column(name = "is_healthy", nullable = false)
-    private boolean isHealthy;
+    private Boolean isHealthy;
 
     @OneToMany(mappedBy = "ingredient")
     private Set<PancakeIngredients> pancakeIngredients = new LinkedHashSet<>();

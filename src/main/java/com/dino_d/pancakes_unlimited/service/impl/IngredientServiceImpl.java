@@ -75,7 +75,7 @@ public class IngredientServiceImpl implements IngredientService {
         responseIngredientDto.setName(ingredient.getName());
         responseIngredientDto.setPrice(ingredient.getPrice());
         responseIngredientDto.setCategory(ingredient.getCategory().getName());
-        responseIngredientDto.setHealthy(ingredient.isHealthy() ? "yes" : "no");
+        responseIngredientDto.setHealthy(ingredient.getIsHealthy() ? "yes" : "no");
 
         return responseIngredientDto;
     }
@@ -90,7 +90,7 @@ public class IngredientServiceImpl implements IngredientService {
         ingredient.setName(requestIngredientDto.getName());
         ingredient.setPrice(requestIngredientDto.getPrice());
         ingredient.setCategory(category);
-        ingredient.setHealthy(requestIngredientDto.isHealthy());
+        ingredient.setIsHealthy(requestIngredientDto.getIsHealthy());
 
         return ingredient;
     }
@@ -105,6 +105,6 @@ public class IngredientServiceImpl implements IngredientService {
         ingredient.setPrice(requestIngredientDto.getPrice());
         ingredient.setCategory(category);
 
-        ingredient.setHealthy(requestIngredientDto.isHealthy());
+        ingredient.setIsHealthy(requestIngredientDto.getIsHealthy());
     }
 }
