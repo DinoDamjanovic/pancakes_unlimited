@@ -11,4 +11,6 @@ public interface OrderService {
     ResponseOrderDto getOrderById(long id);
 
     List<ResponseOrderDto> getAllOrders();
+
+    String getPopularIngredients();
 }

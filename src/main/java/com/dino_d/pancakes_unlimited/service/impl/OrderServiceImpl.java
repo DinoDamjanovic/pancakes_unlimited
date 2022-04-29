@@ -61,6 +61,11 @@ public class OrderServiceImpl implements OrderService {
         return orders.stream().map(o -> mapToDto(o)).collect(Collectors.toList());
     }
 
+    @Override
+    public String getPopularIngredients() {
+        return "ADMIN";
+    }
+
     private List<Pancake> validateOrder(RequestOrderDto requestOrderDto) {
 
         // check how many pancakes is in the order

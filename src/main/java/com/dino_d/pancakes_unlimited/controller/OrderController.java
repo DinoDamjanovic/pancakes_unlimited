@@ -1,7 +1,6 @@
 package com.dino_d.pancakes_unlimited.controller;
 
-import com.dino_d.pancakes_unlimited.dto.RequestOrderDto;
-import com.dino_d.pancakes_unlimited.dto.ResponseOrderDto;
+import com.dino_d.pancakes_unlimited.dto.*;
 import com.dino_d.pancakes_unlimited.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,5 +34,10 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<List<ResponseOrderDto>> getAllOrders() {
         return new ResponseEntity<>(orderService.getAllOrders(), HttpStatus.OK);
+    }
+
+    @GetMapping("/reports/ingredients")
+    public ResponseEntity<String> getOrderById() {
+        return new ResponseEntity<>(orderService.getPopularIngredients(), HttpStatus.OK);
     }
 }
