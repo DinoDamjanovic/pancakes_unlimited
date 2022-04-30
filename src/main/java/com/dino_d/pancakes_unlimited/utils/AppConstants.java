@@ -4,10 +4,23 @@ import java.math.BigDecimal;
 
 public class AppConstants {
 
+    // Pancake constants
     public static final int MINIMUM_PANCAKES_PER_ORDER = 1;
+    public static final int HEALTHY_DISCOUNT_THRESHOLD = 75;    // 75%
+
+
+    // Category constants
     public static final int CATEGORY_BASE_ID = 1;               // kategorija 'baza'
     public static final int CATEGORY_STUFFING_ID = 2;           // kategorija 'nadjev'
-    public static final int HEALTHY_DISCOUNT_THRESHOLD = 75;    // 75%
+
+
+    // Role constants
+    public static final String ROLE_CUSTOMER = "ROLE_CUSTOMER";
+    public static final String ROLE_EMPLOYEE = "ROLE_EMPLOYEE";
+    public static final String ROLE_STORE_OWNER = "ROLE_STORE_OWNER";
+
+
+    //Order constants
 
     // for 5% discount
     // current price is 100%

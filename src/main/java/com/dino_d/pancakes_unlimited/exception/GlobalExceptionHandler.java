@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
             String message = error.getDefaultMessage();
             errors.put(fieldName, message);
         });
-        errors.put(webRequest.getDescription(false), null);
+        errors.put("path", webRequest.getDescription(false));
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }

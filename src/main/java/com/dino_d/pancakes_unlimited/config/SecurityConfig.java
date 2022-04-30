@@ -1,23 +1,27 @@
 package com.dino_d.pancakes_unlimited.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private UserDetailsService userDetailsService;
+
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -31,21 +35,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/pancakes/**").hasRole("CUSTOMER")
                 .antMatchers("/api/ingredients/**").hasRole("EMPLOYEE")
                 .antMatchers("/api/categories/**").hasRole("EMPLOYEE")
+                .antMatchers("/api/auth/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and().httpBasic();
     }
 
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+
     @Bean
     @Override
-    protected UserDetailsService userDetailsService() {
-        UserDetails customer = User.builder().username("customer")
-                .password(passwordEncoder().encode("croz")).roles("CUSTOMER").build();
-        UserDetails employee = User.builder().username("employee")
-                .password(passwordEncoder().encode("palacinke")).roles("EMPLOYEE").build();
-        UserDetails owner = User.builder().username("owner")
-                .password(passwordEncoder().encode("store")).roles("STORE_OWNER").build();
-
-        return new InMemoryUserDetailsManager(customer, employee, owner);
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }
