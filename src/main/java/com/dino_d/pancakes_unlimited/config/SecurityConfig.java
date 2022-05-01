@@ -30,11 +30,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/orders/reports/**").hasRole("STORE_OWNER")
                 .antMatchers("/api/orders/**").hasRole("CUSTOMER")
                 .antMatchers("/api/pancakes/**").hasRole("CUSTOMER")
                 .antMatchers("/api/ingredients/**").hasRole("EMPLOYEE")
                 .antMatchers("/api/categories/**").hasRole("EMPLOYEE")
+                .antMatchers("/api/reports/**").hasRole("STORE_OWNER")
                 .antMatchers("/api/auth/**").permitAll()
                 .anyRequest()
                 .authenticated()

@@ -95,7 +95,7 @@ public class OrderServiceImpl implements OrderService {
                         "Pancake with id " + pancake.getId() + " is invalid. " +
                                 "Pancake must have only one base ingredient and at least one stuffing. " +
                                 "This pancake " + stuffing + " a stuffing and " +
-                                "has " + baseIngredientCount + " base ingredient(s).");
+                                "it has " + baseIngredientCount + " base ingredient(s).");
             }
 
             baseIngredientCount = 0;

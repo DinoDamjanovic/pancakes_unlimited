@@ -70,8 +70,6 @@ public class AuthController {
 
         userRepository.save(newUser);
 
-        return new ResponseEntity<>("User registered successfully. User role: CUSTOMER.\n" +
-                "You can change your role to EMPLOYEE or STORE_OWNER at /api/auth/role " +
-                "by providing role name and auth password for required role.", HttpStatus.CREATED);
+        return new ResponseEntity<>("User registered successfully.", HttpStatus.CREATED);
     }
 }
