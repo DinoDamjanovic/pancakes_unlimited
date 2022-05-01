@@ -1,7 +1,7 @@
 package com.dino_d.pancakes_unlimited.controller;
 
-import com.dino_d.pancakes_unlimited.dto.ResponseIngredientReportInt;
-import com.dino_d.pancakes_unlimited.service.IngredientReportService;
+import com.dino_d.pancakes_unlimited.dto.IngredientReportDtoInt;
+import com.dino_d.pancakes_unlimited.service.ReportService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,21 +12,21 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/reports")
-public class IngredientReportController {
+public class ReportController {
 
-    private IngredientReportService ingredientReportService;
+    private ReportService ingredientReportService;
 
-    public IngredientReportController(IngredientReportService ingredientReportService) {
+    public ReportController(ReportService ingredientReportService) {
         this.ingredientReportService = ingredientReportService;
     }
 
     @GetMapping("/ingredients")
-    public ResponseEntity<List<ResponseIngredientReportInt>> getIngredientsReport() {
+    public ResponseEntity<List<IngredientReportDtoInt>> getIngredientsReport() {
         return new ResponseEntity<>(ingredientReportService.getIngredientsReport(), HttpStatus.OK);
     }
 
     @GetMapping("/healthy-ingredients")
-    public ResponseEntity<List<ResponseIngredientReportInt>> getHealthyIngredientsReport() {
+    public ResponseEntity<List<IngredientReportDtoInt>> getHealthyIngredientsReport() {
         return new ResponseEntity<>(ingredientReportService.getHealthyIngredientsReport(), HttpStatus.OK);
     }
 }
