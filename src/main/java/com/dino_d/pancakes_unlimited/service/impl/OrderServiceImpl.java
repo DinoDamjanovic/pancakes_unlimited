@@ -142,26 +142,15 @@ public class OrderServiceImpl implements OrderService {
 
         BigDecimal healthyDiscountedPrice = BigDecimal.valueOf(0);
         BigDecimal newPrice;
-        int totalIngredients = 0;
-        int healthyIngredients = 0;
 
         for (Pancake pancake : pancakes) {
 
-            for (Ingredient ingredient : pancake.getIngredients()) {
-                if (ingredient.getIsHealthy()) {
-                    healthyIngredients++;
-                }
-                totalIngredients++;
-            }
-
-            // check if percentage of healthy ingredients is higher than HEALTHY_DISCOUNT_THRESHOLD
-            if ((((float) healthyIngredients / totalIngredients) * 100) > HEALTHY_DISCOUNT_THRESHOLD) {
+            if (isHealthy(pancake)) {
                 newPrice = pancake.getPrice().multiply(DISCOUNT_15_PERCENT);
                 healthyPancakeIds.add(pancake.getId());
             } else {
                 newPrice = pancake.getPrice();
             }
-
             healthyDiscountedPrice = healthyDiscountedPrice.add(newPrice);
         }
 
@@ -180,14 +169,27 @@ public class OrderServiceImpl implements OrderService {
         return totalPrice.setScale(2, RoundingMode.HALF_EVEN);
     }
 
+    private boolean isHealthy(Pancake pancake) {
+        int totalIngredients = 0;
+        int healthyIngredients = 0;
+
+        for (Ingredient ingredient : pancake.getIngredients()) {
+            if (ingredient.getIsHealthy()) {
+                healthyIngredients++;
+            }
+            totalIngredients++;
+        }
+
+        // check if percentage of healthy ingredients is higher than HEALTHY_DISCOUNT_THRESHOLD
+        return (((float) healthyIngredients / totalIngredients) * 100) > HEALTHY_DISCOUNT_THRESHOLD;
+    }
+
     private void savePancakePricesToDB(Set<Pancake> pancakes, List<Long> healthyPancakeIds) {
-        for (Long id : healthyPancakeIds) {
-            for (Pancake pancake : pancakes) {
-                if (id == pancake.getId()) {
-                    pancake.setPrice(pancake.getPrice().multiply(DISCOUNT_15_PERCENT)
-                            .setScale(2, RoundingMode.HALF_EVEN));
-                    pancakeRepository.save(pancake);
-                }
+        for (Pancake pancake : pancakes) {
+            if (healthyPancakeIds.contains(pancake.getId())) {
+                pancake.setPrice(pancake.getPrice().multiply(DISCOUNT_15_PERCENT)
+                        .setScale(2, RoundingMode.HALF_EVEN));
+                pancakeRepository.save(pancake);
             }
         }
     }
