@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+
+  dino_pancakes_unlimited:
+    image: mysql:8.0.29
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pancakes_unlimited
+    ports:
+      - "3308:3306"
