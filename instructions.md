@@ -14,6 +14,13 @@ To test the orders easier there are 15 premade pancakes for you in the `pancakes
 * Pancakes with id 6-10 have <= 75% healthy ingredients. 
 * Pancakes with id 11-14 are invalid pancakes (missing base ingredient, stuffing etc.)
 
+When creating pancakes via API, the prices of its ingredients will be summed up and the total price <br>
+will be saved to the database under `pancakes.price` for that particular pancake.<br>
+When creating orders via API, if a discount is applied to the order, all pancakes in the order which had <br>
+their price lowered due to discount will be updated in the database with a new price.
+
+---
+
 Postman API tests for the application can be found 
 [here](https://www.postman.com/satellite-geoscientist-87027700/workspace/pancakes-unlimited-testing).
 <br><br>
