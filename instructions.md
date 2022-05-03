@@ -14,7 +14,11 @@ To test the orders easier there are 15 premade pancakes for you in the `pancakes
 * Pancakes with id 6-10 have <= 75% healthy ingredients. 
 * Pancakes with id 11-14 are invalid pancakes (missing base ingredient, stuffing etc.)
 
-Postman tests for each Resource in the application can be found [here](https://www.postman.com/satellite-geoscientist-87027700/workspace/pancakes-unlimited-testing).
+Postman API tests for the application can be found 
+[here](https://www.postman.com/satellite-geoscientist-87027700/workspace/pancakes-unlimited-testing).
+<br><br>
+*Note: there seems to be a bug in Postman when using Basic Auth.<br>
+If you change login password, it won't take effect until you change your username too.*
 
 ---
 
